@@ -1,5 +1,7 @@
 using FootballScores.Data;
 using FootballScores.Data.Models;
+using FootballScores.Infrastructure;
+using FootballScores.Services.Tournament;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +23,11 @@ builder.Services.AddDefaultIdentity<User>(options =>
     .AddEntityFrameworkStores<FootballScoresDbContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddTransient<ITournamentService, TournamentService>();
+
 var app = builder.Build();
+
+app.PrepareDatabase();
 
 if (app.Environment.IsDevelopment())
 {
@@ -41,9 +47,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+app.UseEndpoints(endpoints =>
+ {
+     endpoints.MapDefaultAreaRoute();
+
+     endpoints.MapDefaultControllerRoute();
+     endpoints.MapRazorPages();
+ });
 
 app.Run();

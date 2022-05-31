@@ -29,6 +29,9 @@
         public Team Team { get; set; }
 
         [Required]
+        public Tournament Tournament { get; set; }
+
+        [Required]
         public int Goals { get; set; }
 
         [Required]

@@ -4,7 +4,6 @@ using FootballScores.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,10 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballScores.Data.Migrations
 {
     [DbContext(typeof(FootballScoresDbContext))]
-    [Migration("20220531131926_CreateTables")]
-    partial class CreateTables
+    partial class FootballScoresDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,12 +92,18 @@ namespace FootballScores.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("TournamentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("YellowCards")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TeamId");
+
+                    b.HasIndex("TournamentId");
 
                     b.ToTable("Players");
                 });
@@ -108,6 +112,10 @@ namespace FootballScores.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Manager")
                         .IsRequired()
@@ -119,12 +127,7 @@ namespace FootballScores.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Teams");
                 });
@@ -139,12 +142,7 @@ namespace FootballScores.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Tournaments");
                 });
@@ -366,6 +364,36 @@ namespace FootballScores.Data.Migrations
                     b.ToTable("TeamTournament");
                 });
 
+            modelBuilder.Entity("TeamUser", b =>
+                {
+                    b.Property<string>("FavoriteTeamsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FavoriteTeamsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("TeamUser");
+                });
+
+            modelBuilder.Entity("TournamentUser", b =>
+                {
+                    b.Property<string>("FavoriteTournamentsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FavoriteTournamentsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("TournamentUser");
+                });
+
             modelBuilder.Entity("FootballScores.Data.Models.Fixture", b =>
                 {
                     b.HasOne("FootballScores.Data.Models.Team", "AwayTeam")
@@ -401,21 +429,15 @@ namespace FootballScores.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FootballScores.Data.Models.Tournament", "Tournament")
+                        .WithMany("Players")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Team");
-                });
 
-            modelBuilder.Entity("FootballScores.Data.Models.Team", b =>
-                {
-                    b.HasOne("FootballScores.Data.Models.User", null)
-                        .WithMany("FavoriteTeams")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("FootballScores.Data.Models.Tournament", b =>
-                {
-                    b.HasOne("FootballScores.Data.Models.User", null)
-                        .WithMany("FavoriteTournaments")
-                        .HasForeignKey("UserId");
+                    b.Navigation("Tournament");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -484,6 +506,36 @@ namespace FootballScores.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TeamUser", b =>
+                {
+                    b.HasOne("FootballScores.Data.Models.Team", null)
+                        .WithMany()
+                        .HasForeignKey("FavoriteTeamsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FootballScores.Data.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TournamentUser", b =>
+                {
+                    b.HasOne("FootballScores.Data.Models.Tournament", null)
+                        .WithMany()
+                        .HasForeignKey("FavoriteTournamentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FootballScores.Data.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FootballScores.Data.Models.Team", b =>
                 {
                     b.Navigation("Fixtures");
@@ -494,13 +546,8 @@ namespace FootballScores.Data.Migrations
             modelBuilder.Entity("FootballScores.Data.Models.Tournament", b =>
                 {
                     b.Navigation("Fixtures");
-                });
 
-            modelBuilder.Entity("FootballScores.Data.Models.User", b =>
-                {
-                    b.Navigation("FavoriteTeams");
-
-                    b.Navigation("FavoriteTournaments");
+                    b.Navigation("Players");
                 });
 #pragma warning restore 612, 618
         }
