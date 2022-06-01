@@ -26,6 +26,16 @@
                 .WithMany(x => x.Fixtures)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Fixture>()
+                .HasOne(x => x.Tournament)
+                .WithMany(x => x.Fixtures)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Player>()
+                .HasOne(x => x.Tournament)
+                .WithMany(x => x.Players)
+                .OnDelete(DeleteBehavior.Restrict);
+
             base.OnModelCreating(builder);
         }
     }

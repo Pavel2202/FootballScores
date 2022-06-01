@@ -127,7 +127,16 @@ namespace FootballScores.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TournamentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TournamentId");
 
                     b.ToTable("Teams");
                 });
@@ -349,21 +358,6 @@ namespace FootballScores.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TeamTournament", b =>
-                {
-                    b.Property<string>("TeamsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TournamentsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("TeamsId", "TournamentsId");
-
-                    b.HasIndex("TournamentsId");
-
-                    b.ToTable("TeamTournament");
-                });
-
             modelBuilder.Entity("TeamUser", b =>
                 {
                     b.Property<string>("FavoriteTeamsId")
@@ -411,7 +405,7 @@ namespace FootballScores.Data.Migrations
                     b.HasOne("FootballScores.Data.Models.Tournament", "Tournament")
                         .WithMany("Fixtures")
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AwayTeam");
@@ -432,10 +426,21 @@ namespace FootballScores.Data.Migrations
                     b.HasOne("FootballScores.Data.Models.Tournament", "Tournament")
                         .WithMany("Players")
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Team");
+
+                    b.Navigation("Tournament");
+                });
+
+            modelBuilder.Entity("FootballScores.Data.Models.Team", b =>
+                {
+                    b.HasOne("FootballScores.Data.Models.Tournament", "Tournament")
+                        .WithMany("Teams")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tournament");
                 });
@@ -491,21 +496,6 @@ namespace FootballScores.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TeamTournament", b =>
-                {
-                    b.HasOne("FootballScores.Data.Models.Team", null)
-                        .WithMany()
-                        .HasForeignKey("TeamsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FootballScores.Data.Models.Tournament", null)
-                        .WithMany()
-                        .HasForeignKey("TournamentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TeamUser", b =>
                 {
                     b.HasOne("FootballScores.Data.Models.Team", null)
@@ -548,6 +538,8 @@ namespace FootballScores.Data.Migrations
                     b.Navigation("Fixtures");
 
                     b.Navigation("Players");
+
+                    b.Navigation("Teams");
                 });
 #pragma warning restore 612, 618
         }

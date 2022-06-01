@@ -1,6 +1,7 @@
 using FootballScores.Data;
 using FootballScores.Data.Models;
 using FootballScores.Infrastructure;
+using FootballScores.Services.Team;
 using FootballScores.Services.Tournament;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ builder.Services.AddDefaultIdentity<User>(options =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<ITournamentService, TournamentService>();
+builder.Services.AddTransient<ITeamService, TeamService>();
 
 var app = builder.Build();
 

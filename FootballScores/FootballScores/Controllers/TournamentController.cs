@@ -1,22 +1,37 @@
 ﻿namespace FootballScores.Controllers
 {
     using FootballScores.Data;
+    using FootballScores.Models.Tournament;
+    using FootballScores.Services.Tournament;
     using Microsoft.AspNetCore.Mvc;
 
     public class TournamentController : Controller
     {
-        private readonly FootballScoresDbContext context;
+        private readonly ITournamentService service;
 
-        public TournamentController(FootballScoresDbContext context)
+        public TournamentController(ITournamentService service)
         {
-            this.context = context;
+            this.service = service;
         }
 
         public IActionResult All()
-        {
-            var tournaments = context.Tournaments;
+            => this.View(service.All());
 
-            return this.View(tournaments);
+        public IActionResult Table(string id)
+        {
+            var tournament = service.GetTournament(id);
+
+            var model = new TableViewModel
+            {
+                Id = tournament.Id,
+                Name = tournament.Name,
+            };
+
+            var teams = service.Teams(id);
+
+            model.Teams = teams;
+
+            return this.View(model);
         }
     }
 }

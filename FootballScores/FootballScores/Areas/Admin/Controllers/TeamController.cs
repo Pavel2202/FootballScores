@@ -1,14 +1,14 @@
 ﻿namespace FootballScores.Areas.Admin.Controllers
 {
-    using FootballScores.Models.Tournament;
-    using FootballScores.Services.Tournament;
+    using FootballScores.Models.Team;
+    using FootballScores.Services.Team;
     using Microsoft.AspNetCore.Mvc;
 
-    public class TournamentController : AdminController
+    public class TeamController : AdminController
     {
-        private readonly ITournamentService service;
+        private readonly ITeamService service;
 
-        public TournamentController(ITournamentService service)
+        public TeamController(ITeamService service)
         {
             this.service = service;
         }
@@ -17,7 +17,7 @@
             => this.View();
 
         [HttpPost]
-        public async Task<IActionResult> Add(AddTournamentViewModel model)
+        public async Task<IActionResult> Add(AddTeamViewModel model)
         {
             if (!ModelState.IsValid)
             {

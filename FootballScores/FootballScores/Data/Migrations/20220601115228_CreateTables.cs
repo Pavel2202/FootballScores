@@ -49,20 +49,6 @@ namespace FootballScores.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Teams",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Manager = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Teams", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Tournaments",
                 columns: table => new
                 {
@@ -181,25 +167,47 @@ namespace FootballScores.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TeamUser",
+                name: "Teams",
                 columns: table => new
                 {
-                    FavoriteTeamsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Manager = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Points = table.Column<int>(type: "int", nullable: false),
+                    TournamentId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teams_Tournaments_TournamentId",
+                        column: x => x.TournamentId,
+                        principalTable: "Tournaments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TournamentUser",
+                columns: table => new
+                {
+                    FavoriteTournamentsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UsersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TeamUser", x => new { x.FavoriteTeamsId, x.UsersId });
+                    table.PrimaryKey("PK_TournamentUser", x => new { x.FavoriteTournamentsId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_TeamUser_AspNetUsers_UsersId",
+                        name: "FK_TournamentUser_AspNetUsers_UsersId",
                         column: x => x.UsersId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TeamUser_Teams_FavoriteTeamsId",
-                        column: x => x.FavoriteTeamsId,
-                        principalTable: "Teams",
+                        name: "FK_TournamentUser_Tournaments_FavoriteTournamentsId",
+                        column: x => x.FavoriteTournamentsId,
+                        principalTable: "Tournaments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -235,7 +243,7 @@ namespace FootballScores.Data.Migrations
                         column: x => x.TournamentId,
                         principalTable: "Tournaments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -268,53 +276,29 @@ namespace FootballScores.Data.Migrations
                         column: x => x.TournamentId,
                         principalTable: "Tournaments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TeamTournament",
+                name: "TeamUser",
                 columns: table => new
                 {
-                    TeamsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TournamentsId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TeamTournament", x => new { x.TeamsId, x.TournamentsId });
-                    table.ForeignKey(
-                        name: "FK_TeamTournament_Teams_TeamsId",
-                        column: x => x.TeamsId,
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TeamTournament_Tournaments_TournamentsId",
-                        column: x => x.TournamentsId,
-                        principalTable: "Tournaments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TournamentUser",
-                columns: table => new
-                {
-                    FavoriteTournamentsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FavoriteTeamsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UsersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TournamentUser", x => new { x.FavoriteTournamentsId, x.UsersId });
+                    table.PrimaryKey("PK_TeamUser", x => new { x.FavoriteTeamsId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_TournamentUser_AspNetUsers_UsersId",
+                        name: "FK_TeamUser_AspNetUsers_UsersId",
                         column: x => x.UsersId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TournamentUser_Tournaments_FavoriteTournamentsId",
-                        column: x => x.FavoriteTournamentsId,
-                        principalTable: "Tournaments",
+                        name: "FK_TeamUser_Teams_FavoriteTeamsId",
+                        column: x => x.FavoriteTeamsId,
+                        principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -384,9 +368,9 @@ namespace FootballScores.Data.Migrations
                 column: "TournamentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeamTournament_TournamentsId",
-                table: "TeamTournament",
-                column: "TournamentsId");
+                name: "IX_Teams_TournamentId",
+                table: "Teams",
+                column: "TournamentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TeamUser_UsersId",
@@ -421,9 +405,6 @@ namespace FootballScores.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Players");
-
-            migrationBuilder.DropTable(
-                name: "TeamTournament");
 
             migrationBuilder.DropTable(
                 name: "TeamUser");

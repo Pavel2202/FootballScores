@@ -1,5 +1,18 @@
 ﻿@model IEnumerable<Tournament>
 
-@foreach(var tournament in Model) {
-    <div>@tournament.Name</div>
-}
+<ul class="list-group">
+    @foreach (var tournament in Model)
+    {
+        <li class="list-group-item">
+            @tournament.Name
+
+            <a class="btn btn-primary" asp-controller="Tournament" asp-action="Table" asp-route-id="@tournament.Id">View</a>
+
+            @if(User.IsAdmin())
+            {
+                <a class="btn btn-warning" asp-area="Admin" asp-controller="Tournament" asp-action="Table" asp-route-id="@tournament.Id">Edit</a>
+                <a class="btn btn-danger" asp-area="Admin" asp-controller="Tournament" asp-action="Table" asp-route-id="@tournament.Id">Delete</a>
+            }
+        </li>
+    }
+</ul>

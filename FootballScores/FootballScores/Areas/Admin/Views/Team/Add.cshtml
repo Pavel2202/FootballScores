@@ -1,0 +1,36 @@
+﻿@model AddTeamViewModel
+
+@{
+    ViewData["Title"] = "Add Team";
+}
+
+<h2 class="heading-margin text-center">Add Team</h2>
+
+<form method="post">
+  <div class="form-group">
+    <label asp-for="Name">Name</label>
+    <input asp-for="Name" class="form-control" placeholder="Team name...">
+    <span asp-validation-for="Name" class="small text-danger"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Manager">Manager</label>
+    <input asp-for="Manager" class="form-control" placeholder="Manager name...">
+    <span asp-validation-for="Manager" class="small text-danger"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Logo">Logo</label>
+    <input asp-for="Logo" class="form-control" placeholder="Team logo...">
+    <span asp-validation-for="Logo" class="small text-danger"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Tournament">Tournament</label>
+    <input asp-for="Tournament" class="form-control" placeholder="Tournament...">
+    <span asp-validation-for="Tournament" class="small text-danger"></span>
+  </div>
+
+  <input class="btn btn-primary float-right" type="submit" value="Save"/>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

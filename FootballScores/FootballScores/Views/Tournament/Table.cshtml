@@ -1,0 +1,11 @@
+﻿@model TableViewModel
+
+<div class="list-group">
+    <span class="list-group-item list-group-item-action active">
+        @Model.Name
+    </span>
+    @foreach (var team in Model.Teams)
+    {
+        <a href="#" class="list-group-item list-group-item-action">@team.Name</a>
+    }
+</div>
